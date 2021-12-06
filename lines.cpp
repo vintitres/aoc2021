@@ -29,6 +29,9 @@ class Line {
   }
 };
     int water[1000][1000];
+    template <typename T> int sgn(T val) {
+          return (T(0) < val) - (val < T(0));
+    }
 
 int main(){
   string from, sep, to;
@@ -37,7 +40,6 @@ int main(){
   while(cin >> from >> sep >> to){
     auto vfrom = split(from, ","), vto = split(to, ",");
     int x1 = stoi(vfrom[0]), y1=stoi(vfrom[1]), x2=stoi(vto[0]),y2=stoi(vto[1]);
-    if (x1 != x2&& y1 != y2)continue;
     if (x1 > maxx) maxx = x1;
     if (y1 > maxy) maxy = y1;
     if (x2 > maxx) maxx = x2;
@@ -56,16 +58,17 @@ int main(){
   cout<<"a";
   for (auto line : lines) {
     int x1 = line.x1, x2=line.x2, y1=line.y1, y2=line.y2;
-    for (int i=x1, j=y1; true; x1==x2 ? (y1<y2 ? ++j : --j) : (x1<x2?++i:--i)){
+    int xx=sgn(x2-x1), yy=sgn(y2-y1);
+    for (int i=x1, j=y1; true; i+=xx, j+=yy){
       ++water[i][j];
       if (i == x2 && j == y2) break;
     }
 
   }
-  cout<<"b";
+  cout<<"b"<<endl;
   int c = 0;
-  for (int i =0; i< maxx; ++i){
-  for (int j =0; j< maxy; ++j){
+  for (int i =0; i<= maxx; ++i){
+  for (int j =0; j<=maxy; ++j){
     cout << water[i][j]<< " ";
       if(water[i][j]>1)++c;
   }
