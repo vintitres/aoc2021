@@ -23,6 +23,14 @@ vector<string> split (string s, string delimiter) {
   return res;
 }
 
+int cost(int pos, map<int,int> &crabs) {
+  int cost=0;
+  for (auto c : crabs) {
+    int dist = abs(c.first - pos);
+    cost += (dist*(dist+1)/2)*c.second;
+  }
+  return cost;
+}
 
 int main(){
   string s;
@@ -39,17 +47,19 @@ int main(){
     sum += crab;
     ++count;
   }
-  int bestcost=INT_MAX;
-  for (int pos = crabs.begin()->first; pos <= crabs.rbegin()->first; ++ pos){
-      int cost=0;
-  for (auto c : crabs) {
-    int dist = abs(c.first - pos);
-    cost += (dist*(dist+1)/2)*c.second;
+  for (int b = crabs.begin()->first, e = crabs.rend()->first; b <= e;){
+    int x=b+(e-b)/2;
+    int c1 = cost(x-1, crabs);
+    int c2 = cost(x, crabs);
+    int c3 = cost(x+1, crabs);
+    if (c2 < c3 && c2 < c1) {
+      cout << c2 << endl;
+      break;
+    }
+    if (c1 > c2) b = x + 1;
+    else e = x - 1;
+    cout << x << ": " <<c2 << endl;
   }
-  bestcost=min(bestcost,cost);
-  cout << pos << ": " <<cost << " " << bestcost << endl;
-  }
-  cout << "= " << bestcost << endl;
 }
 
 
