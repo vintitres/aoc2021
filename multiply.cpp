@@ -25,20 +25,22 @@ vector<string> split (string s, string delimiter) {
 int main(){
   string s;
   cin >> s;
-  vector <int> fish(9, 0);
-  int fishc;
+  vector <long long int> fish(9, 0);
+  long long int fishc=0;
   for (auto sn : split(s, ",")) {
     ++fish[stoi(sn)];
     ++fishc;
   }
-  for (int i = 1; i <=80; ++i){
+  for (int i = 1; i <=256; ++i){
     fish[(i + 6) % 9] += fish[(i - 1) % 9];
     fishc += fish[(i - 1) % 9];
+    /*
     for (int j = i; j < i +9; ++j) {
       cout << fish[j%9] << " ";
     }
+      */
     cout << "= " << fishc << endl;
-      }
+  }
 }
 
 
