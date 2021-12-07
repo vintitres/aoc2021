@@ -43,9 +43,11 @@ int main(){
   for (int pos = crabs.begin()->first; pos <= crabs.rbegin()->first; ++ pos){
       int cost=0;
   for (auto c : crabs) {
-    cost += abs(c.first - pos)*c.second;
+    int dist = abs(c.first - pos);
+    cost += (dist*(dist+1)/2)*c.second;
   }
   bestcost=min(bestcost,cost);
+  cout << pos << ": " <<cost << " " << bestcost << endl;
   }
   cout << "= " << bestcost << endl;
 }
