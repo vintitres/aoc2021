@@ -1,4 +1,5 @@
 #include<iostream>
+#include<algorithm>
 #include<cmath>
 #include<map>
 #include<list>
@@ -23,27 +24,100 @@ vector<string> split (string s, string delimiter) {
   return res;
 }
 
+bool subset(string s1, string s2) {
+  for (char c : s1) {
+    bool f = false;
+    for (char cc : s2) {
+      if (c == cc) {
+        f = true;
+        break;
+      }
+    }
+    if (!f) return false;
+  }
+  return true;
+}
+
 
 int main(){
   int cnt =0;
-  vector<string> patt(10), value(4);
+  vector<string> patt(10), p(10);
   while (cin >> patt[0]){
-    for (int i=1; i<10; ++i) cin >> patt[i];
-    string sep;
-    cin >> sep;
-    for (int i=0; i<4; ++i) {
-      string digit;
-      cin >> digit;
-      switch (digit.size()) {
+    p[0]="";
+    for (int i=1; i<10; ++i){
+      p[i]="";
+      cin >> patt[i];
+    }
+    for (int i=0; i<10; ++i){
+      sort(patt[i].begin(), patt[i].end());
+      switch (patt[i].size()) {
         case 2:
+          p[1] = patt[i];
+          break;
         case 3:
+          p[7] = patt[i];
+          break;
         case 4:
+          p[4] = patt[i];
+          break;
         case 7:
-          ++cnt;
+          p[8] = patt[i];
           break;
         default:
           break;
       }
+    }
+    for (int i=0; i<10; ++i){
+      switch (patt[i].size()) {
+        case 5:
+          // 2 or 3 or 5
+          if (subset(p[1],patt[i])) {
+            p[3] = patt[i];
+            patt[i]="";
+          } 
+          break;
+        case 6:
+          // 0 or 6 or 9
+          if (subset(p[4],patt[i])) {
+            p[9] = patt[i];
+          } else if (subset(p[1], patt[i])) {
+            p[0]=patt[i];
+          } else {
+            p[6]=patt[i];
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    for (int i=0; i<10; ++i){
+      switch (patt[i].size()) {
+        case 5:
+          // 2 or 5
+          if (subset(patt[i],p[6])) {
+            p[5] = patt[i];
+          } else {
+            p[2] = patt[i];
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    map<string,int>pp;
+    for (int i=0; i<10; ++i){
+      cout << i << ": " << p[i] << endl;
+      pp[p[i]]=i;
+    }
+    string sep;
+    cin >> sep;
+    int d=1000;
+    for (int i=0; i<4; ++i) {
+      string digit;
+      cin >> digit;
+      sort(digit.begin(), digit.end());
+      cnt += d*pp[digit];
+      d/=10;
     }
   }
   cout << cnt << endl;
