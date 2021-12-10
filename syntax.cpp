@@ -14,7 +14,7 @@ using namespace std;
 
 int main(){
   string s;
-  vector <int> scores;
+  vector <long long int> scores;
   while(cin >> s) {
     stack<char> st;
     bool good = true;
@@ -40,7 +40,7 @@ int main(){
       }
     }
     if (good) {
-      int score = 0;
+      long long int score = 0;
       while(!st.empty()) {
         char c = st.top();
         st.pop();
@@ -62,6 +62,7 @@ int main(){
             break;
         }
       }
+      cout << score << endl;
       scores.push_back(score);
     }
   }
