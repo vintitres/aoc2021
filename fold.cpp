@@ -27,18 +27,15 @@ vector<string> split (string s, string delimiter) {
 }
 
 void add(int c1, int c2, set<pair<int,int>> &points1, set<pair<int,int>> &points2) {
-  cout << "add " << c1 << " " << c2 << endl;
   points1.insert(make_pair(c1,c2));
   points2.insert(make_pair(c2,c1));
 }
 
 void fold(int c, set<pair<int,int>> &points1, set<pair<int,int>> &points2) {
-  cout << "fold " << c << endl;
   set<pair<int,int>> newpoints;
   for(auto it = points1.lower_bound(make_pair(c,0)); it!=points1.end();) {
     auto p = *it;
     int c1 = p.first, c2 = p.second;
-    cout << "infold " << c1 << " " << c2 << endl;
     it = points1.erase(it);
     points2.erase(make_pair(c2,c1));
     int newc1 = c - (c1 - c);
@@ -57,21 +54,26 @@ int main(){
       cin >> s; //"along"
       cin >> s;
       auto p = split(s,"=");
-      cout << p[0] << endl;
       if(p[0] == "x"){
         fold(stoi(p[1]), pointsx, pointsy);
       }else{
         fold(stoi(p[1]), pointsy, pointsx);
       }
-      break;
     } else {
       auto p = split(s,",");
       add(stoi(p[0]),stoi(p[1]),pointsx,pointsy);
     }
   }
-
-  cout << pointsx.size() << endl;
-
+  auto it = pointsy.begin();
+  for (int y = 0; y < 10; ++y) {
+    for (int x = 0; x < 80; ++x) {
+      if (it != pointsy.end() && x == (*it).second && y == (*it).first) {
+        cout << "#";
+        ++it;
+      } else cout << ".";
+    }
+    cout << endl;
+  }
 }
 
 
