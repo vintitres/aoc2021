@@ -13,15 +13,11 @@ using namespace std;
 
 vector<string> split (string s, string delimiter) {
   size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-  string token;
   vector<string> res;
-
   while ((pos_end = s.find (delimiter, pos_start)) != string::npos) {
-    token = s.substr (pos_start, pos_end - pos_start);
+    res.push_back(s.substr (pos_start, pos_end - pos_start));
     pos_start = pos_end + delim_len;
-    res.push_back (token);
   }
-
   res.push_back (s.substr (pos_start));
   return res;
 }
@@ -32,17 +28,11 @@ void add(int c1, int c2, set<pair<int,int>> &points1, set<pair<int,int>> &points
 }
 
 void fold(int c, set<pair<int,int>> &points1, set<pair<int,int>> &points2) {
-  set<pair<int,int>> newpoints;
   for(auto it = points1.lower_bound(make_pair(c,0)); it!=points1.end();) {
-    auto p = *it;
-    int c1 = p.first, c2 = p.second;
+      int c1 = it->first, c2 = it->second;
     it = points1.erase(it);
     points2.erase(make_pair(c2,c1));
-    int newc1 = c - (c1 - c);
-    newpoints.insert(make_pair(newc1, c2));
-  }
-  for (auto p : newpoints) {
-    add(p.first, p.second, points1, points2);
+    add(c-(c1-c), c2, points1, points2);
   }
 }
 
@@ -64,9 +54,10 @@ int main(){
       add(stoi(p[0]),stoi(p[1]),pointsx,pointsy);
     }
   }
+  int maxx = pointsx.rbegin()->first, maxy = pointsy.rbegin()->first;
   auto it = pointsy.begin();
-  for (int y = 0; y < 10; ++y) {
-    for (int x = 0; x < 80; ++x) {
+  for (int y = 0; y <= maxy; ++y) {
+    for (int x = 0; x <= maxx; ++x) {
       if (it != pointsy.end() && x == (*it).second && y == (*it).first) {
         cout << "#";
         ++it;
