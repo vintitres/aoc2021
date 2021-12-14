@@ -22,32 +22,50 @@ vector<string> split (string s, string delimiter) {
   return res;
 }
 
+void add(map<string, long long int> &polymer, string &pair, long long int count) {
+    if (polymer.find(pair) == polymer.end()) polymer[pair] = 0;
+    polymer[pair] += count;
+}
+
 int main(){
-  string polymer;
-  cin >> polymer;
+  string polymert;
+  cin >> polymert;
   string pair, sep, ins;
-  map<string,char> pairs;
+  map<string,char> rules;
   while(cin >> pair >> sep >> ins) {
-    pairs[pair] = ins[0];
+    rules[pair] = ins[0];
   }
-
-  for (int i = 1; i <= 10; ++i) {
-    for (auto it = polymer.begin(); it + 1 != polymer.end(); ) {
-      string pair{*it, *(it + 1)};
-      it = polymer.insert(it + 1, pairs[pair]) + 1; 
+  map<string,long long int> polymer;
+  for (auto it = polymert.begin(); it + 1 != polymert.end(); ++it) {
+    string pair{*it, *(it + 1)};
+    add(polymer, pair, 1);
+  }
+  for (int i = 1; i <= 40; ++i) {
+    map<string,long long int> nextpolymer;
+    for (auto p : polymer) {
+      string pair = p.first;
+      long long int count = p.second;
+      char nc = rules[pair];
+      string np1{pair[0], nc};
+      string np2{nc, pair[1]};
+      add(nextpolymer, np1, count);
+      add(nextpolymer, np2, count);
     }
+    polymer = nextpolymer;
   }
-
-  map<char,int> count;
-  for (char c : polymer) {
+   
+  map<char,long long int> count;
+  for (auto p : polymer) {
+    char c = p.first[0];
     if (count.find(c) == count.end()) count[c] = 0;
-    ++count[c];
+    count[c] += p.second;
   }
-  int maxcount, mincount;
+  count[*polymert.rbegin()]++;
+  long long int maxcount, mincount;
   maxcount = mincount = count.begin()->second;
   for (auto p : count) {
     cout << p.first << " " << p.second << endl;
-    int cc = p.second;
+    long long int cc = p.second;
     maxcount = cc > maxcount ? cc : maxcount;
     mincount = cc < mincount ? cc : mincount;
   }
