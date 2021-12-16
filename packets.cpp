@@ -18,7 +18,6 @@ void append(vector<bool> &packet, int x) {
     packet.push_back(x & d);
     d>>=1;
   }
-  cout << endl;
 }
 
 void append(vector<bool> &packet, char c) {
@@ -28,14 +27,11 @@ void append(vector<bool> &packet, char c) {
 int readint(vector<bool>::iterator &it, int len) {
   int x = 0;
   for (int i = 0; i < len; ++i) {
-    cout << *it;
     x <<= 1;
     x += *(it++);
   }
-  cout << " " << x << endl;
   return x;
 }
-
 
 long long int readpacket(vector<bool>::iterator &it) {
   int ver = readint(it, 3);
@@ -82,9 +78,6 @@ long long int readpacket(vector<bool>::iterator &it) {
   }
 }
 
-
-
-
 int main(){
   string s;
   cin >> s;
@@ -92,10 +85,6 @@ int main(){
   for (char c : s) {
     append(packet, c);
   }
-  for (bool b : packet) {
-    cout << (b ? 1 : 0);
-  }
-  cout << endl;
   vector<bool>::iterator it = packet.begin();
   cout << readpacket(it) << endl;
 }
