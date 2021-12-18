@@ -74,11 +74,19 @@ class Pair {
     else l->addl(xx);
   }
   void reduce() {
-    while(reducestep().action != RAction::none) {print(); cout<< endl;}
+    RAction a = RAction::explode;
+    while(a != RAction::none) {
+      a = reducestep().action;
+      if (a == RAction::none) {
+        a = reducestep(4, true).action;
+      }
+      print();
+      cout<< endl;
+    }
   }
-  RResult reducestep(int lv = 4) {
+  RResult reducestep(int lv = 4, bool allowsplit = false) {
     if (x != -1) {
-      if (x >= 10) {
+      if (x >= 10 && allowsplit) {
         l = new Pair(x / 2);
         r = new Pair(x / 2 + x % 2);
         x = -1;
@@ -98,7 +106,7 @@ class Pair {
         x = 0;
         return RResult(RAction::explode, lx, rx);
       } 
-      auto res = l->reducestep(lv - 1);
+      auto res = l->reducestep(lv - 1, allowsplit);
       if (res.action == RAction::split) {
         return res;
       } else if (res.action == RAction::explode) {
@@ -106,7 +114,7 @@ class Pair {
         res.rexplode = 0;
         return res;
       } else {
-        res = r->reducestep(lv - 1);
+        res = r->reducestep(lv - 1, allowsplit);
         if (res.action == RAction::explode){
           if (res.lexplode != 0) l->addr(res.lexplode);
           res.lexplode = 0;
