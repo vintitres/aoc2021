@@ -80,8 +80,6 @@ class Pair {
       if (a == RAction::none) {
         a = reducestep(4, true).action;
       }
-      print();
-      cout<< endl;
     }
   }
   RResult reducestep(int lv = 4, bool allowsplit = false) {
@@ -95,9 +93,6 @@ class Pair {
       return RResult(RAction::none);
     } else {
       if (lv == 0) {
-        cout << "expl: ";
-        print();
-        cout<< endl;
         int lx = l->x, rx = r->x;
         delete l;
         l = NULL;
@@ -123,6 +118,10 @@ class Pair {
       }
     }
   }
+  Pair *copy() {
+    if (x != -1) return new Pair(x);
+    return new Pair(l->copy(), r->copy());
+    }
   long long int mag() {
     if (x != -1) return x;
     return l->mag() * 3LL + r->mag() * 2LL;
@@ -141,23 +140,22 @@ class Pair {
 
 int main(){
   string s;
-  cin >> s;
-  auto it = s.begin();
-  Pair *p = Pair::parse(it);
-  p->print();
-  cout << endl;
-  cout << endl;
+  vector <Pair*> pairs;
   while(cin >> s) {
-    it = s.begin();
-    p = new Pair(p, Pair::parse(it));
-    p->print();
-    cout << endl;
-    p->reduce();
-    p->print();
-    cout << endl;
-    cout << endl;
+    auto it = s.begin();
+    pairs.push_back(Pair::parse(it));
   }
-  cout << p->mag() << endl;
-  delete p;
+  long long maxmag = 0;
+  for (int i = 0; i < pairs.size(); ++i){
+    for (int j = 0; j < pairs.size(); ++j){
+      Pair *p = new Pair(pairs[i]->copy(), pairs[j]->copy());
+      p->reduce();
+      int mag = p->mag();
+      delete p;
+      maxmag = mag > maxmag ? mag : maxmag;
+    }
+  }
+
+  cout << maxmag << endl;
 }
 
