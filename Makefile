@@ -1,2 +1,2 @@
 %.out: %.cpp
-	time clang++ -O3 $< -o $@
+	time clang++ $< -o $@

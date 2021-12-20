@@ -14,6 +14,10 @@ using namespace std;
 
 typedef tuple<int,int,int> XYZ;
 
+vector<vector<int>> perms1 = {{0,1,2},{1,2,0},{2,0,1}};
+vector<vector<int>> perms2 = {{0,2,1},{1,0,2},{2,1,0}};
+
+
 vector<string> split (string s, string delimiter) {
   size_t pos_start = 0, pos_end, delim_len = delimiter.length();
   vector<string> res;
@@ -43,8 +47,8 @@ XYZ shift(const XYZ &p, const XYZ &s) {
 void rotshift(vector<XYZ> &vp, const XYZ &s, const vector<int> &r, const vector<int> &rs) {
   for (int i = 0; i < vp.size(); ++i) {
     vp[i] = shift(rot(vp[i],r,rs), s);
-    int x,y,z;
-    tie(x,y,z) = vp[i];
+    //int x,y,z;
+    //tie(x,y,z) = vp[i];
     //cout << x << "," << y << "," << z << endl;
   }
 }
@@ -99,6 +103,8 @@ int main(){
   q.push(0);
   done[0] = true;
   sort(scanners[0].begin(), scanners[0].end());
+  vector<XYZ> scannersxyz;
+  scannersxyz.push_back(make_tuple(0,0,0));
   while (!q.empty()) {
     i = q.front();
     q.pop();
@@ -106,23 +112,20 @@ int main(){
       if (done[j]) continue;
       vector<int> r(3), rs(3);
       bool found = false;
-      XYZ sh;
       for (r[0] = -1; r[0] <= 1 && !found; r[0] += 2) {
         for (r[1] = -1; r[1] <= 1 && !found; r[1] += 2) {
           for (r[2] = -1; r[2] <= 1 && !found; r[2] += 2) {
-            for (rs[0] = 0; rs[0] < 3 && !found; ++rs[0]) {
-              for (rs[1] = 0; rs[1] < 3 && !found; ++rs[1]) {
-                if (rs[0] == rs[1]) continue;
-                for (rs[2] = 0; rs[2] < 3 && !found; ++rs[2]) {
-                  if (rs[2] == rs[0] || rs[2] == rs[1])continue;
-                  tie(found, sh) = match(scanners[i], scanners[j], r, rs);
-                  if (found) {
-                    rotshift(scanners[j], sh, r, rs);
-                    sort(scanners[j].begin(), scanners[j].end());
-                    q.push(j);
-                    done[j] = true;
-                  }
-                }
+            bool permparity = r[0]*r[1]*r[2] == 1;
+            for(auto rs : (permparity ? perms1 : perms2)) {
+              XYZ sh;
+              tie(found, sh) = match(scanners[i], scanners[j], r, rs);
+              if (found) {
+                rotshift(scanners[j], sh, r, rs);
+                scannersxyz.push_back(sh);
+                sort(scanners[j].begin(), scanners[j].end());
+                q.push(j);
+                done[j] = true;
+                break;
               }
             }
           }
@@ -130,12 +133,16 @@ int main(){
       }
     }
   }
-  set<XYZ> points;
-  for (auto s:scanners) {
-    for (auto p: s) {
-      points.insert(p);
+  int maxd = 0;
+  for (auto it1 = scannersxyz.begin(); it1 != scannersxyz.end(); ++it1) {
+    for (auto it2 = scannersxyz.begin(); it2 != scannersxyz.end(); ++it2) {
+      int x1,x2,y1,y2,z1,z2;
+      tie(x1,y1,z1) = *it1;
+      tie(x2,y2,z2) = *it2;
+      int d = abs(x1-x2)+abs(y1-y2)+abs(z1-z2);
+      maxd = d > maxd ? d : maxd;
     }
   }
-  cout << points.size() << endl;
+  cout << maxd << endl;
 }
 
